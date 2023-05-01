@@ -1,0 +1,20 @@
+{
+  "name": "ltfjs-node",
+  "version": "1.0.0",
+  "description": "This package contains the node.js implementation of the solutions to some 'Learning Tensorflow.js' chapter exercises",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "type": "module",
+  "keywords": [
+    "node",
+    "ai",
+    "machine-learning",
+    "tensorflow.js"
+  ],
+  "author": "Afolabi Gboyega Emmanuel",
+  "license": "ISC",
+  "dependencies": {
+    "@tensorflow/tfjs": "^4.4.0"
+  }
+}
