@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Generate random grayscale image</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <h2>Random 400x400 grayscale image</h2>
+        <canvas id="image-canvas"></canvas>
+    </div>
+    <script>
+        const imageCanvas = document.getElementById('image-canvas');
+        tf.ready().then(() => {
+            tf.tidy(() => {
+                const randomTensor = tf.randomUniform([400, 400]);
+                // Got this implementation from the solution in
+                // Appendix B as I couldn't get the solution
+                const { values } = tf.topk(randomTensor, 400);
+                const reshapedTensor = values.reshape([400, 400, 1]);
+                tf.browser.toPixels(reshapedTensor, imageCanvas);
+            });
+        });
+    </script>
+</body>
+
+</html>
