@@ -1,0 +1,78 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Crop pet's face</title>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs/dist/tf.min.js"></script>
+</head>
+
+<body>
+    <div>
+        <div style="position:relative">
+            <h2>Box drawn over pet's face</h2>
+            <img id="dog-image" src="http://localhost:3000/browser/chapter-five/dog2.jpg" width="100%" />
+            <canvas id="box-canvas" style="position:absolute;left:0;"></canvas>
+        </div>
+        <div style="padding-top: 20px;">
+            <h2>Cropped pet's face image</h2>
+            <canvas id="image-canvas"></canvas>
+        </div>
+    </div>
+    <script>
+        const imageCanvas = document.getElementById('image-canvas');
+        const dogImage = document.getElementById('dog-image');
+        const boxCanvas = document.getElementById('box-canvas');
+
+        function drawBox(points, canvas = boxCanvas, image = dogImage) {
+            const { height: imageHeight, width: imageWidth } = dogImage;
+            canvas.width = imageWidth;
+            canvas.height = imageHeight;
+
+            const startX = points[0] * imageWidth;
+            const startY = points[1] * imageHeight;
+            const width = (points[2] - points[0]) * imageWidth;
+            const height = (points[3] - points[1]) * imageHeight;
+
+            const ctx = canvas.getContext("2d");
+            ctx.strokeStyle = "#0F0";
+            ctx.lineWidth = 4;
+            ctx.strokeRect(startX, startY, width, height);
+        }
+
+        tf.ready().then(() => {
+            const modelPath = 'http://localhost:3000/browser/chapter-five/pet-face-model/model.json';
+            tf.tidy(() => {
+                tf.loadLayersModel(modelPath).then(model => {
+                    const imageTensor = tf.browser.fromPixels(dogImage);
+                    const processedTensor = tf.image
+                        .resizeNearestNeighbor(imageTensor, [256, 256], true)
+                        .div(255)
+                        .reshape([1, 256, 256, 3]);
+                    const result = model.predict(processedTensor);
+                    const flatPoints = result.dataSync();
+
+                    drawBox(flatPoints);
+
+                    const { height: clientHeight, width: clientWidth } = dogImage;
+
+                    const startHeight = parseInt(flatPoints[1] * clientHeight);
+                    const startWidth = parseInt(flatPoints[0] * clientWidth);
+                    const endHeight = parseInt((flatPoints[3] - flatPoints[1]) * clientHeight);
+                    const endWidth = parseInt((flatPoints[2] - flatPoints[0]) * clientWidth);
+
+                    const cropStart = [startHeight, startWidth, 0];
+                    const cropEnd = [endHeight, endWidth, 3];
+                    const cropped = tf.slice(imageTensor, cropStart, cropEnd);
+
+                    const resizedImage = tf.image
+                        .resizeNearestNeighbor(cropped, [96, 96], true);
+                    tf.browser.toPixels(resizedImage, imageCanvas);
+                });
+            });
+        });
+    </script>
+</body>
+
+</html>
