@@ -12,7 +12,7 @@
     <div>
         <div style="position:relative">
             <h2>Box drawn over pet's face</h2>
-            <img id="dog-image" src="http://localhost:3000/browser/chapter-five/dog2.jpg" width="100%" />
+            <img id="dog-image" src="http://localhost:3000/chapter-five/dog2.jpg" width="100%" />
             <canvas id="box-canvas" style="position:absolute;left:0;"></canvas>
         </div>
         <div style="padding-top: 20px;">
@@ -42,7 +42,7 @@
         }
 
         tf.ready().then(() => {
-            const modelPath = 'http://localhost:3000/browser/chapter-five/pet-face-model/model.json';
+            const modelPath = 'http://localhost:3000/chapter-five/pet-face-model/model.json';
             tf.tidy(() => {
                 tf.loadLayersModel(modelPath).then(model => {
                     const imageTensor = tf.browser.fromPixels(dogImage);
