@@ -9,7 +9,8 @@ const supportedMimeTypes = {
     jpeg: 'image/jpeg',
     json: 'application/json',
     bin: 'application/octet-stream',
-    html: 'text/html'
+    html: 'text/html',
+    csv: 'text/csv'
 };
 
 const server = http.createServer((req, res) => {
